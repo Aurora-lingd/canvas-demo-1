@@ -1,2 +1,2 @@
 *{margin: 0;padding: 0;box-sizing: border-box;}
-#canvas{height: 100vh;border: 1px solid palevioletred;}
+#canvas{display: block;}
