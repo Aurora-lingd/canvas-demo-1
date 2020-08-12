@@ -5,81 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>画板</title>
+    <title>简易画板</title>
     <link rel="stylesheet" href="./style.css">
 
 </head>
 
 <body>
     <canvas id="canvas"></canvas>
-    <script>
-        //画线
-        let canvas = document.getElementById("canvas");
-
-        canvas.width = document.documentElement.clientWidth;
-        canvas.height = document.documentElement.clientHeight;
-
-        let ctx = canvas.getContext("2d");
-        ctx.fillStyle = "black";
-        ctx.strokeStyle = 'none';//描边
-        ctx.lineWidth = 8;
-        ctx.lineCap = 'round';//每个线的末尾是圆的还是方的
-
-
-
-
-        let painting = false;
-        let last //记录上一次的结果
-
-        // 是否支持触屏
-        var isTouchDevice = 'ontouchstart' in document.documentElement;
-
-        if (isTouchDevice) {
-            //在开始的时候获取点
-            canvas.ontouchstart = (e) => {
-                let x = e.touches[0].clientX;
-                let y = e.touches[0].clientY;
-                last = [x, y];
-            }
-            canvas.ontouchmove = (e) => {
-                //先在console.log(e);里面找  然后在touches[0]里面有x y console.log(e.touches[0]);
-                let x = e.touches[0].clientX;
-                let y = e.touches[0].clientY;
-                //console.log(x, y);
-                drawLine(last[0], last[1], x, y);
-                last = [x, y];
-            }
-        } else {
-            canvas.onmousedown = (e) => {
-                painting = true;
-                last = [e.clientX, e.clientY];
-            }
-
-            //浏览器去调用的 canvas.onmousemove(事件的相关信息),浏览器传的值
-            canvas.onmousemove = (e) => {
-                if (painting === true) {
-                    drawLine(last[0], last[1], e.clientX, e.clientY);
-                    last = [e.clientX, e.clientY];
-                }
-            }
-
-            canvas.onmouseup = () => {
-                painting = false;
-            }
-        }
-
-        function drawLine(x1, y1, x2, y2) {
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();//描边
-        }
-
-
-
-
-
-    </script>
+    <div class="icons">
+        <div class="left-icons">
+            <svg class="icon clear" id="clear">
+                <use xlink:href="#icon-clear"></use>
+            </svg>
+            <svg class="icon download" id="download">
+                <use xlink:href="#icon-download" ></use>
+            </svg>
+        </div>
+        <div class="right-icons">
+            <div>
+                <svg class="icon active" id="pen">
+                    <use xlink:href="#icon-pen" ></use>
+                </svg>
+                <svg class="icon" id="rubber">
+                    <use xlink:href="#icon-rubber"></use>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <ul class="color">
+        <li class="active black" id="black"></li>
+        <li class="green" id="green"></li>
+        <li class="red" id="red"></li>
+        <li class="organ" id="organ"></li>
+        <input type="color" class="pickColor" id="currentColor" autocompleteHTML5>
+    </ul>
+    <div class="range">
+        <input type="range" min="1" max="20" value="5" id="rangeValue" >
+    </div>
+    <script src="./main.js"></script>
+    <script src="//at.alicdn.com/t/font_1998027_dcu3j8jqclj.js"></script>
 </body>
 
 </html>
