@@ -8,6 +8,8 @@ ul,ol{list-style: none}
     display: flex;
     border:1px solid red;
     justify-content: space-around;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+    -webkit-tap-highlight-color:transparent;
 }
 .icons >.left-icons{
     position: fixed;

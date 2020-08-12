@@ -12,7 +12,6 @@ canvas.height = document.documentElement.clientHeight;
 
 let ctx = canvas.getContext("2d");
 
-// ctx.fillStyle = "black";
 ctx.strokeStyle = 'none';//描边
 ctx.lineCap = 'round';//每个线的末尾是圆的还是方的
 
@@ -57,10 +56,7 @@ const pinkColor = (pinkColor,pinkElement,x,y,z)=>{
   z.classList.remove('active')
 }
 
-const black =document.querySelector('.black')
-const green = document.querySelector('.green')
-const red = document.querySelector('.red')
-const organ = document.querySelector('.organ')
+
 black.onclick=()=>{
   pinkColor('black',black,green,organ,red)
 }
@@ -94,31 +90,58 @@ rangeValue.onchange = (e)=>{
 const isTouchDevice = 'ontouchstart' in document.documentElement;
 if (isTouchDevice) {
   //在开始的时候获取点
+  let x1;
+  let y1;
+  let x2;
+  let y2;
   canvas.ontouchstart = (e) => {
-    let x = e.touches[0].clientX;
-    let y = e.touches[0].clientY;
+    x1 = e.touches[0].clientX;
+    y1 = e.touches[0].clientY;
     if (rubberEnabled){
-      clearRect(x,y)
+      clearRect(x1,y1)
     }else {
-      last = [x, y];
+      last = [x1, y1];
     }
   }
   canvas.ontouchmove = (e) => {
     //先在console.log(e);里面找  然后在touches[0]里面有x y console.log(e.touches[0]);
-    let x = e.touches[0].clientX;
-    let y = e.touches[0].clientY;
+    x2 = e.touches[0].clientX;
+    y2= e.touches[0].clientY;
     if (rubberEnabled){
-      clearRect(x,y)
+      const asin = (lineWidth/2)*Math.sin(Math.atan((y2-y1)/(x2-x1)));
+      const acos = (lineWidth/2)*Math.cos(Math.atan((y2-y1)/(x2-x1)));
+      const x3 = x1+asin;
+      const y3 = y1-acos;
+      const x4 = x1-asin;
+      const y4 = y1+acos;
+      const x5 = x2+asin;
+      const y5 = y2-acos;
+      const x6 = x2-asin;
+      const y6 = y2+acos;
+      clearRect(x2,y2)
+
+      //清除矩形剪辑区域里的像素
+      clearArea(x3,y3,x4,y4,x5,y5,x6,y6)
+      //记录最后坐标
+      x1 = x2;
+      y1 = y2;
     }else {
-      last = [x, y];
+      drawLine(last[0], last[1], x2, y2);
+      last = [x2, y2];
     }
-    drawLine(last[0], last[1], x, y);
+
   }
 } else {
+  let x1;
+  let y1;
+  let x2;
+  let y2;
   canvas.onmousedown = (e) => {
     painting = true;
     if (rubberEnabled){
-      clearRect(e.clientX,e.clientY)
+      x1 = e.clientX;
+      y1 = e.clientY;
+      clearRect(x1,y1)
     }else {
       last = [e.clientX, e.clientY];
     }
@@ -128,7 +151,27 @@ if (isTouchDevice) {
   canvas.onmousemove = (e) => {
     if (painting === true) {
       if (rubberEnabled){
-        clearRect(e.clientX,e.clientY)
+        x2 = e.clientX;
+        y2 = e.clientY
+        //获取剪辑区域
+        const asin = (lineWidth/2)*Math.sin(Math.atan((y2-y1)/(x2-x1)));
+        const acos = (lineWidth/2)*Math.cos(Math.atan((y2-y1)/(x2-x1)));
+        const x3 = x1+asin;
+        const y3 = y1-acos;
+        const x4 = x1-asin;
+        const y4 = y1+acos;
+        const x5 = x2+asin;
+        const y5 = y2-acos;
+        const x6 = x2-asin;
+        const y6 = y2+acos;
+        clearRect(x2,y2)
+
+        //清除矩形剪辑区域里的像素
+        clearArea(x3,y3,x4,y4,x5,y5,x6,y6)
+        //记录最后坐标
+        x1 = x2;
+        y1 = y2;
+
       }else {
         drawLine(last[0], last[1], e.clientX, e.clientY);
         last = [e.clientX, e.clientY];
@@ -151,8 +194,25 @@ function drawLine(x1, y1, x2, y2) {
   ctx.lineTo(x2, y2);
   //通过线条来绘制图形轮廓。
   ctx.stroke();//描边
-  ctx.closePath()//闭合路径
+  // ctx.closePath()//闭合路径
 }
 function clearRect(x,y) {
-  ctx.clearRect(x,y,lineWidth,lineWidth)
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(x,y,lineWidth/2,0,2*Math.PI);
+  ctx.clip()
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.restore();
+}
+function clearArea(x3,y3,x4,y4,x5,y5,x6,y6) {
+  ctx.save()
+  ctx.beginPath()
+  ctx.moveTo(x3,y3);
+  ctx.lineTo(x5,y5);
+  ctx.lineTo(x6,y6);
+  ctx.lineTo(x4,y4);
+  ctx.closePath();
+  ctx.clip()
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.restore();
 }
