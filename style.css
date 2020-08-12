@@ -31,6 +31,9 @@ ul,ol{list-style: none}
 .icon.download{
     fill: #74b744;
 }
+@media screen and (max-width: 500px) {
+    .icon.download{display: none}
+}
 .icon.active{
     fill: #95c3b2;
 }
