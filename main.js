@@ -165,7 +165,7 @@ if (isTouchDevice) {
         const x6 = x2-asin;
         const y6 = y2+acos;
         clearRect(x2,y2)
-
+        console.log(asin,acos)
         //清除矩形剪辑区域里的像素
         clearArea(x3,y3,x4,y4,x5,y5,x6,y6)
         //记录最后坐标
@@ -216,3 +216,9 @@ function clearArea(x3,y3,x4,y4,x5,y5,x6,y6) {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.restore();
 }
+document.body.addEventListener(
+  'touchmove',(e)=>{
+    e.preventDefault()
+  },
+  {passive:false}
+)
